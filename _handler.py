@@ -3,6 +3,8 @@ import subprocess
 import os
 import _parser
 
-_parser.parse(sys.argv[1], 'out.py')
-subprocess.run('python out.py')
-os.remove('out.py')
+TMP = 'out.py'
+
+_parser.parse(sys.argv[1], TMP)
+subprocess.run((sys.argv[2], TMP))
+os.remove(TMP)

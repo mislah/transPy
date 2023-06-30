@@ -1,15 +1,17 @@
-import re
+from io import BytesIO
+import tokenize
 
 with open('test.py', 'r') as f:
-    source = f.read()
+   data = f.read()
 
-# Singleline strings
-sngl_string = r'([\'\"])(.*?)(\1)'
-sngl_strings = re.findall(sngl_string, source)
+tokens = tokenize.tokenize(BytesIO(data.encode('utf-8')).readline) 
+source = list()
+for token in tokens:
+   if token.type == tokenize.STRING:
+      token = token._replace(string="$")
+   elif token.type == tokenize.COMMENT:
+      token = token._replace(string="#")
+   source.append(token)
 
-# Multiline strings
-mult_string =  r'([\'\"]{3})(.*?)(\1)'
-mult_strings = re.findall(mult_string, source, re.DOTALL)
-
-printv = lambda v: {print("".join(i)) for i in v}
-k = printv(sngl_strings)
+transp = tokenize.untokenize(source).decode('utf-8')
+print(transp)
